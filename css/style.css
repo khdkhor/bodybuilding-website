@@ -1637,7 +1637,211 @@ html[dir="rtl"] .form-input[type="email"] {
 
 
 
+/* ==========================================================================
+   15b. LOADING SCREEN (built in index.html, removed by js/main.js)
+   ========================================================================== */
 
+/* Locks page scrolling while the loader is visible (class added/removed by JS).
+   scrollbar-gutter keeps the layout from shifting when the scrollbar is hidden. */
+html.loader-active {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; /* above the sticky header (100) and skip link (200) */
+  display: grid;
+  place-items: center;
+  background-color: var(--color-bg);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.6s ease,
+    visibility 0s linear 0.6s;
+  /* Failsafe: hides itself after 8s even if JavaScript never runs */
+  animation: loader-failsafe 0.4s ease 8s forwards;
+  touch-action: none; /* stops touch-scrolling the page underneath */
+}
+
+.loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Breathing red glow + soft vignette */
+.loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 40% 36% at 50% 50%, rgba(214, 40, 40, 0.2), transparent 70%),
+    radial-gradient(ellipse 80% 70% at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+  animation: loader-glow 2.8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.loader-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.75rem, 5vh, 2.5rem);
+  padding: 1.5rem;
+}
+
+.loader-mark {
+  position: relative;
+  transition: transform 0.7s ease;
+}
+
+.loader.is-hidden .loader-mark {
+  transform: scale(1.05);
+}
+
+/* Logo: width is set here, height follows the SVG's own proportions */
+.loader-logo {
+  display: block;
+  width: min(62vw, 20rem);
+  height: auto;
+  object-fit: contain;
+  clip-path: inset(0 100% 0 0);
+  animation: loader-wipe 1.1s cubic-bezier(0.65, 0, 0.25, 1) 0.25s forwards;
+}
+
+/* Red light line that leads the wipe */
+.loader-mark::after {
+  content: "";
+  position: absolute;
+  top: -6%;
+  bottom: -6%;
+  left: 0;
+  width: 2px;
+  background-color: var(--color-accent);
+  box-shadow: 0 0 16px 2px rgba(214, 40, 40, 0.8);
+  opacity: 0;
+  animation: loader-sweep 1.1s cubic-bezier(0.65, 0, 0.25, 1) 0.25s forwards;
+  pointer-events: none;
+}
+
+/* Progress hairline: slowly fills to 85%, jumps to 100% when the page is ready */
+.loader-bar {
+  display: block;
+  width: min(55vw, 11rem);
+  height: 2px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.loader-bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  /* Starts with the first paint (no JavaScript needed) and slows towards 85% */
+  animation: loader-fill 2.4s cubic-bezier(0.15, 0.7, 0.25, 1) forwards;
+}
+
+html[dir="rtl"] .loader-bar-fill {
+  transform-origin: right;
+}
+
+/* Class added by js/main.js when the page is ready */
+.loader.is-complete .loader-bar-fill {
+  animation: loader-fill-complete 0.3s ease forwards;
+}
+
+/* Text for screen readers only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Short landscape phones */
+@media (max-height: 480px) {
+  .loader-logo {
+    width: min(40vw, 12rem);
+  }
+}
+
+@keyframes loader-wipe {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes loader-sweep {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes loader-glow {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes loader-fill {
+  to {
+    transform: scaleX(0.85);
+  }
+}
+
+@keyframes loader-fill-complete {
+  from {
+    transform: scaleX(0.85);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader::before {
+    animation: none;
+  }
+
+  .loader-logo {
+    clip-path: none;
+    animation: none;
+  }
+
+  .loader-mark::after {
+    display: none;
+  }
+}
 /* ==========================================================================
    16. REDUCED MOTION
    ========================================================================== */

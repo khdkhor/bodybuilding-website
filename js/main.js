@@ -59,6 +59,7 @@
       'brand.name': ' مربی ایمان صادقی نژاد ',
       'brand.logoLabel': 'مربی ایمان صادقی نژاد - بازگشت به بالای صفحه',
       'lang.groupLabel': 'انتخاب زبان',
+      'loader.label': 'در حال بارگذاری…',
 
       /* Navigation */
       'nav.aria': 'منوی اصلی',
@@ -178,17 +179,18 @@
 
     en: {
       /* Metadata */
-      'meta.title': 'COACH [NAME] | Personal Training & Bodybuilding Coach',
-      'meta.description': 'Personal training and bodybuilding coaching focused on structured resistance training, disciplined progress, and individualized programs. Start your journey with COACH [NAME].',
-      'meta.ogDescription': 'Build strength. Sculpt your legacy. Personalized training and disciplined progress with COACH [NAME].',
+      'meta.title': 'COACH Iman SadeghiNejad | Personal Training & Bodybuilding Coach',
+      'meta.description': 'Personal training and bodybuilding coaching focused on structured resistance training, disciplined progress, and individualized programs. Start your journey with COACH Iman SadeghiNejad.',
+      'meta.ogDescription': 'Build strength. Sculpt your legacy. Personalized training and disciplined progress with COACH Iman SadeghiNejad.',
       'meta.ogLocale': 'en_US',
       'meta.ogLocaleAlt': 'fa_IR',
 
       /* Global */
       'skip.link': 'Skip to main content',
-      'brand.name': 'COACH [NAME]',
-      'brand.logoLabel': 'COACH [NAME] - Back to top',
+      'brand.name': 'COACH Iman SadeghiNejad',
+      'brand.logoLabel': 'COACH Iman SadeghiNejad - Back to top',
       'lang.groupLabel': 'Select language',
+      'loader.label': 'Loading…',
 
       /* Navigation */
       'nav.aria': 'Main navigation',
@@ -206,7 +208,7 @@
       'hero.text': 'Personalized training built around your goals, your body, and your schedule. Through structured programming and disciplined progress, every session moves you one step closer to the strongest version of yourself.',
       'hero.ctaPrimary': 'START YOUR JOURNEY',
       'hero.ctaSecondary': 'EXPLORE PROGRAMS',
-      'hero.imgAlt': 'Portrait of COACH [NAME] in a gym setting',
+      'hero.imgAlt': 'Portrait of COACH Iman SadeghiNejad in a gym setting',
 
       /* About */
       'about.label': 'MEET YOUR COACH',
@@ -219,7 +221,7 @@
       'about.certifications.text': '[Add verified certifications here]',
       'about.specialties.title': 'Specialties',
       'about.specialties.text': '[Add specialties here]',
-      'about.imgAlt': 'COACH [NAME] training in the gym',
+      'about.imgAlt': 'COACH Iman SadeghiNejad training in the gym',
 
       /* Programs */
       'programs.label': 'TRAINING PROGRAMS',
@@ -296,7 +298,7 @@
       /* Footer */
       'footer.navAria': 'Footer navigation',
       'footer.socialAria': 'Social media',
-      'footer.copy': '© 2026 COACH [NAME]. All rights reserved.',
+      'footer.copy': '© 2026 COACH Iman SadeghiNejad. All rights reserved.',
 
       /* Lightbox */
       'lightbox.dialogLabel': 'Enlarged client progress photo',
@@ -406,7 +408,108 @@
 
     applyLanguage(readSavedLanguage(), false);
   }
+  /* ------------------------------------------------------------------------
+     0a. Loading screen
+     Shows until the page, its images and fonts are ready, but never longer
+     than MAX_WAIT_MS, so a failed resource cannot trap the visitor.
+     The loader is deleted from the page afterwards, so it cannot reappear.
+     ------------------------------------------------------------------------ */
+  function initLoader() {
+    const loader = document.getElementById('loader');
+    if (!loader) return;
 
+    const MAX_WAIT_MS = 5000;  // hard cap, counted from the start of navigation
+    const FADE_MS = 600;       // keep equal to the opacity transition on .loader (CSS)
+    const BAR_FINISH_MS = 300; // keep equal to loader-fill-complete (CSS)
+    const SEEN_KEY = 'coach-site-loader-seen';
+
+    const root = document.documentElement;
+    const guardedAreas = document.querySelectorAll('.skip-link, .site-header, #main-content, .site-footer');
+    const reduceMotion = reducedMotionQuery.matches;
+
+    let released = false;
+    let dismissed = false;
+
+    // Removes the loader and every restriction it set. Safe to call more than once;
+    // every exit path (normal, hard cap, CSS failsafe, error) ends here.
+    const release = () => {
+      if (released) return;
+      released = true;
+
+      root.classList.remove('loader-active');
+      guardedAreas.forEach((area) => area.removeAttribute('inert'));
+      loader.remove();
+
+      try {
+        window.sessionStorage.setItem(SEEN_KEY, '1');
+      } catch (error) {
+        // Ignore: storage unavailable
+      }
+    };
+
+    // The CSS failsafe may already have hidden the loader before this script ran
+    if (window.getComputedStyle(loader).visibility === 'hidden') {
+      release();
+      return;
+    }
+
+    try {
+      // Block scrolling and keyboard access to the page underneath
+      root.classList.add('loader-active');
+      guardedAreas.forEach((area) => area.setAttribute('inert', ''));
+
+      // Backstop: when the CSS failsafe animation hides the loader, release the locks too.
+      // (animationend bubbles, so only react to the loader's own failsafe animation.)
+      loader.addEventListener('animationend', (event) => {
+        if (event.target === loader && event.animationName === 'loader-failsafe') release();
+      });
+
+      let seenThisSession = false;
+      try {
+        seenThisSession = window.sessionStorage.getItem(SEEN_KEY) === '1';
+      } catch (error) {
+        // sessionStorage unavailable: treat as a first visit
+      }
+
+      // Let the animation finish on a first visit; keep repeat loads short
+      const minVisibleMs = reduceMotion ? 300 : seenThisSession ? 500 : 1500;
+      const startedAt = performance.now();
+
+      const dismiss = () => {
+        if (dismissed || released) return;
+        dismissed = true;
+
+        loader.classList.add('is-complete'); // progress bar fills to 100%
+
+        window.setTimeout(() => {
+          if (released) return;
+          loader.classList.add('is-hidden'); // starts the fade-out
+          // Release only once the fade is over (instant with reduced motion)
+          window.setTimeout(release, reduceMotion ? 0 : FADE_MS + 50);
+        }, reduceMotion ? 0 : BAR_FINISH_MS);
+      };
+
+      const pageLoaded =
+        document.readyState === 'complete'
+          ? Promise.resolve()
+          : new Promise((resolve) => window.addEventListener('load', resolve, { once: true }));
+
+      const fontsReady =
+        document.fonts && document.fonts.ready ? document.fonts.ready.catch(() => {}) : Promise.resolve();
+
+      Promise.all([pageLoaded, fontsReady]).then(() => {
+        const remaining = Math.max(0, minVisibleMs - (performance.now() - startedAt));
+        window.setTimeout(dismiss, remaining);
+      });
+
+      // Hard cap, measured from navigation start (performance.now() counts from there),
+      // so a late-running script can never outlast the 8s CSS failsafe.
+      window.setTimeout(dismiss, Math.max(0, MAX_WAIT_MS - performance.now()));
+    } catch (error) {
+      release(); // never leave the page locked after an unexpected error
+      throw error; // reported by the warning in init()
+    }
+  }
   
 /* ------------------------------------------------------------------------
    0b. Mobile navigation (hamburger)
@@ -884,16 +987,17 @@ function initMobileNav() {
      The language comes first so the form and lightbox use the right text.
      ------------------------------------------------------------------------ */
   function init() {
-    [
-  initLanguage,
-  initMobileNav,
-  initHeaderScroll,
-  initActiveNav,
-  initScrollReveal,
-  initContactForm,
-  initExternalLinks,
-  initLightbox,
-].forEach((feature) => {
+        [
+      initLanguage,
+      initLoader,
+      initMobileNav,
+      initHeaderScroll,
+      initActiveNav,
+      initScrollReveal,
+      initContactForm,
+      initExternalLinks,
+      initLightbox,
+    ].forEach((feature) => {
       try {
         feature();
       } catch (error) {

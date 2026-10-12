@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">IMAN SADEGHI NEJAD</title>
+  <desc id="logo-desc">Minimalist geometric IS monogram in white and athletic red, with the name IMAN SADEGHI NEJAD beneath.</desc>
+
+  <g id="emblem">
+    <path
+      d="M330 166 L440 103 L440 147 L375 185 L375 211 L440 249 L440 297 L330 236 L310 220 L310 181 Z"
+      fill="#F5F5F5"
+    />
+
+    <path
+      d="M670 166 L560 103 L560 147 L625 185 L625 211 L560 249 L560 297 L670 236 L690 220 L690 181 Z"
+      fill="#F5F5F5"
+    />
+
+    <path
+      d="M310 160 L440 86 L440 125 L310 200 Z"
+      fill="#D62828"
+    />
+
+    <path
+      d="M690 160 L560 86 L560 125 L690 200 Z"
+      fill="#D62828"
+    />
+
+    <path
+      d="M500 50 L556 82 L535 101 L535 407 L556 425 L500 468 L444 425 L465 407 L465 101 L444 82 Z"
+      fill="#F5F5F5"
+    />
+  </g>
+
+  <text
+    x="500"
+    y="565"
+    text-anchor="middle"
+    fill="#F5F5F5"
+    font-family="Impact, 'Arial Narrow', sans-serif"
+    font-size="43"
+    font-weight="800"
+    letter-spacing="6"
+    textLength="710"
+    lengthAdjust="spacingAndGlyphs"
+  >IMAN SADEGHI NEJAD</text>
+</svg>

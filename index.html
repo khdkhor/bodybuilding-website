@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="meta.title">مربی ایمان صادقی نژاد | مربی بدنسازی و تمرین شخصی</title>
-  <meta name="description" content="مربیگری بدنسازی و تمرین شخصی با تمرکز بر تمرینات مقاومتی ساختارمند، پیشرفت منضبط و برنامه‌های اختصاصی. مسیر خود را با مربی [نام] آغاز کنید." data-i18n-attr="content:meta.description">
-  <meta name="author" content="COACH [NAME]">
+  <meta name="description" content="مربیگری بدنسازی و تمرین شخصی با تمرکز بر تمرینات مقاومتی ساختارمند، پیشرفت منضبط و برنامه‌های اختصاصی. مسیر خود را با مربی ایمان صادقی نژاد آغاز کنید." data-i18n-attr="content:meta.description">
+  <meta name="author" content="COACH Iman SadeghiNejad">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0a0a0a">
 
@@ -28,8 +28,28 @@
   <meta name="twitter:image" content="https://www.example.com/images/coach-hero.jpg">
 
   <link rel="stylesheet" href="css/style.css">
+
+  <noscript>
+    <style>
+      .loader {
+        display: none;
+      }
+    </style>
+  </noscript>
 </head>
 <body>
+
+    <!-- Loading screen: the ONLY place images/logo.svg is used. Removed by js/main.js when the page is ready. -->
+  <div class="loader" id="loader" role="status">
+    <div class="loader-inner">
+      <div class="loader-mark">
+        <img class="loader-logo" src="images/logo.svg" alt="" decoding="async" fetchpriority="high">
+      </div>
+      <span class="loader-bar" aria-hidden="true"><span class="loader-bar-fill"></span></span>
+      <span class="visually-hidden" data-i18n="loader.label">در حال بارگذاری…</span>
+    </div>
+  </div>
+
 
   <a class="skip-link" href="#main-content" data-i18n="skip.link">رفتن به محتوای اصلی</a>
 
